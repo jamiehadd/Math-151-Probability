@@ -3458,82 +3458,15 @@ E[X\mid Y=y] = \sum_x x\, p_{X|Y}(x\mid y).
 <li>If <span class="math inline">\(A^c\)</span> occurs, that trial was wasted and — by memorylessness — we’re back to square one: <span class="math inline">\(X = 1+X&#39;\)</span> for a fresh Geometric(<span class="math inline">\(p\)</span>) copy <span class="math inline">\(X&#39;\)</span>, so <span class="math inline">\(E[X\mid A^c] = 1+E[X]\)</span>.</li>
 </ul>
 <p>By the law of total expectation, <span class="math display">\[
-E[X] = P(A)E[X\mid A] + P(A^c)E[X\mid A^c] = p\cdot 1 + (1-p)\big(1+E[X]\big)
-= 1 + (1-p)E[X],
+\begin{aligned}
+E[X] &amp;= P(A)E[X\mid A] + P(A^c)E[X\mid A^c] = p\cdot 1 + (1-p)\big(1+E[X]\big)
+\\&amp;= 1 + (1-p)E[X],
+\end{aligned}
 \]</span> so <span class="math inline">\(p\,E[X]=1\)</span>, giving <span class="math inline">\(E[X] = \tfrac1p\)</span> — which matches our previous calculation.</p>
 <hr>
 <p>The same trick on <span class="math inline">\(X^2\)</span>: <span class="math inline">\(X^2\mid A^c = (1+X&#39;)^2 = 1+2X&#39;+X&#39;^2\)</span>, so <span class="math display">\[
 E[X^2] = p + (1-p)\big(1+2E[X]+E[X^2]\big) = 1+2(1-p)E[X] + (1-p)E[X^2],
 \]</span> which solves to <span class="math inline">\(E[X^2] = \dfrac{2-p}{p^2}\)</span>, and therefore <span class="math inline">\(\mathrm{Var}(X) = E[X^2]-(E[X])^2 = \dfrac{1-p}{p^2}\)</span> — which is what we saw in a previous lecture!</p>
-</section>
-<section id="recursing-the-randomized-kaczmarz-bound" class="level2">
-<h2 class="anchored" data-anchor-id="recursing-the-randomized-kaczmarz-bound">Recursing the randomized Kaczmarz bound</h2>
-<p>Recall our previous one-step bound, valid conditional on the <em>current</em> iterate <span class="math inline">\(x_k\)</span>: <span class="math display">\[
-E\big[\|x_{k+1}-x^\star\|^2 \mid x_k\big] \le (1-c)\,\|x_k-x^\star\|^2,
-\qquad c = \frac{\sigma_{\min}(A)^2}{\|A\|_F^2}.
-\]</span></p>
-<p>That’s only a statement about <em>one</em> step, conditional on where we happen to be. To turn it into an unconditional guarantee after <span class="math inline">\(k\)</span> steps, apply the law of total expectation repeatedly: <span class="math display">\[
-\begin{aligned}
-E\big[\|x_2-x^\star\|^2\big] &amp;= E\Big[E\big[\|x_2-x^\star\|^2 \mid x_1\big]\Big]
-\le E\big[(1-c)\|x_1-x^\star\|^2\big] \\&amp;= (1-c)\,E\big[\|x_1-x^\star\|^2\big]
-\le (1-c)^2\|x_0-x^\star\|^2.
-\end{aligned}
-\]</span></p>
-<hr>
-<p>Repeating this argument (tower property, one step at a time) gives, for every <span class="math inline">\(k\)</span>, <span class="math display">\[
-E\big[\|x_k-x^\star\|^2\big] \le (1-c)^k \|x_0-x^\star\|^2,
-\]</span> — exactly the compounded bound we <em>plotted</em> before. Now we know why “applying the one-step bound repeatedly” is legitimate: it’s the law of total expectation, used <span class="math inline">\(k\)</span> times.</p>
-<div id="bbff37e4" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-08T04:48:32.511603Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-08T04:48:32.511448Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-08T04:48:33.005458Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-08T04:48:33.004735Z&quot;}" data-execution_count="2">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">151</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>m, n <span class="op">=</span> <span class="dv">20</span>, <span class="dv">8</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> rng.standard_normal((m, n))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>x_star <span class="op">=</span> rng.standard_normal(n)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> A <span class="op">@</span> x_star</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>row_norm_sq <span class="op">=</span> (A <span class="op">**</span> <span class="dv">2</span>).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>p_row_norm <span class="op">=</span> row_norm_sq <span class="op">/</span> row_norm_sq.<span class="bu">sum</span>()</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>sigma_min <span class="op">=</span> np.linalg.svd(A, compute_uv<span class="op">=</span><span class="va">False</span>)[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>frob_sq <span class="op">=</span> row_norm_sq.<span class="bu">sum</span>()</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> sigma_min<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> frob_sq</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="dv">60</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>num_runs <span class="op">=</span> <span class="dv">2000</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>checkpoints <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>]</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>errors_sq <span class="op">=</span> np.zeros((num_runs, num_steps <span class="op">+</span> <span class="dv">1</span>))</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(num_runs):</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.zeros(n)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    errors_sq[r, <span class="dv">0</span>] <span class="op">=</span> np.linalg.norm(x <span class="op">-</span> x_star) <span class="op">**</span> <span class="dv">2</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    idx_sequence <span class="op">=</span> rng.choice(m, size<span class="op">=</span>num_steps, p<span class="op">=</span>p_row_norm)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> t, i <span class="kw">in</span> <span class="bu">enumerate</span>(idx_sequence, start<span class="op">=</span><span class="dv">1</span>):</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        a_i, b_i <span class="op">=</span> A[i], b[i]</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x <span class="op">+</span> (b_i <span class="op">-</span> a_i <span class="op">@</span> x) <span class="op">/</span> row_norm_sq[i] <span class="op">*</span> a_i</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        errors_sq[r, t] <span class="op">=</span> np.linalg.norm(x <span class="op">-</span> x_star) <span class="op">**</span> <span class="dv">2</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>mean_error_sq <span class="op">=</span> errors_sq.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>initial_error_sq <span class="op">=</span> errors_sq[:, <span class="dv">0</span>].mean()</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;</span><span class="sc">{</span><span class="st">&#39;k&#39;</span><span class="sc">:&gt;4}</span><span class="ss"> </span><span class="sc">{</span><span class="st">&#39;empirical E[||x_k-x*||^2]&#39;</span><span class="sc">:&gt;28}</span><span class="ss"> </span><span class="sc">{</span><span class="st">&#39;bound (1-c)^k ||x_0-x*||^2&#39;</span><span class="sc">:&gt;28}</span><span class="ss">&quot;</span>)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> checkpoints:</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    bound <span class="op">=</span> initial_error_sq <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> c) <span class="op">**</span> k</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;</span><span class="sc">{</span>k<span class="sc">:&gt;4}</span><span class="ss"> </span><span class="sc">{</span>mean_error_sq[k]<span class="sc">:&gt;28.5f}</span><span class="ss"> </span><span class="sc">{</span>bound<span class="sc">:&gt;28.5f}</span><span class="ss">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Intel MKL WARNING: Support of Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2) enabled only processors has been deprecated. Intel oneAPI Math Kernel Library 2025.0 will require Intel(R) Advanced Vector Extensions (Intel(R) AVX) instructions.
-Intel MKL WARNING: Support of Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2) enabled only processors has been deprecated. Intel oneAPI Math Kernel Library 2025.0 will require Intel(R) Advanced Vector Extensions (Intel(R) AVX) instructions.
-   k    empirical E[||x_k-x*||^2]   bound (1-c)^k ||x_0-x*||^2
-   0                     14.24286                     14.24286
-  10                      5.34193                      9.61687
-  20                      2.26812                      6.49338
-  30                      1.00931                      4.38437
-  40                      0.45129                      2.96036
-  50                      0.20803                      1.99885
-  60                      0.09983                      1.34964</code></pre>
-</div>
-</div>
 </section>
 <section id="independence" class="level2">
 <h2 class="anchored" data-anchor-id="independence">Independence</h2>
@@ -3571,12 +3504,6 @@ p_{X,Y}(x,y) = p_X(x)\,p_Y(y) \quad \text{for all } x,y,
 \]</span> equivalently <span class="math inline">\(p_{X|Y}(x\mid y) = p_X(x)\)</span> whenever <span class="math inline">\(p_Y(y)&gt;0\)</span> — conditioning on <span class="math inline">\(Y\)</span> never changes <span class="math inline">\(X\)</span>’s distribution.</p>
 </div>
 </div>
-<p><strong>Revisiting our RK example:</strong> Recall randomized Kaczmarz samples a row index <span class="math inline">\(I_k\in\{1,\dots,m\}\)</span> at every iteration from a fixed PMF <span class="math inline">\(p_I\)</span> (e.g. the row-norm PMF seen previously), <strong>with replacement</strong> — each iteration’s draw doesn’t remove that row from future consideration.</p>
-<p>Because the draws are made independently at each iteration, the joint PMF of the indices at two iterations factors: <span class="math display">\[
-p_{I_1,I_2}(i,j) = p_I(i)\,p_I(j).
-\]</span></p>
-<hr>
-<p>Contrast this with <em>without-replacement</em> row-sampling — there, removing a row after sampling it means the joint PMF of two draws does <strong>not</strong> factor this way (the second draw’s distribution depends on what the first draw was).</p>
 </section>
 <section id="conditional-independence" class="level2">
 <h2 class="anchored" data-anchor-id="conditional-independence">Conditional Independence</h2>
@@ -3663,11 +3590,13 @@ Theorem (stated previously): for independent <span class="math inline">\(X,Y\)</
 </div>
 </div>
 <p><strong>Proof:</strong> let <span class="math inline">\(\mu_X=E[X],\mu_Y=E[Y]\)</span>. Expanding and using linearity twice, <span class="math display">\[
-\mathrm{Var}(X+Y) = E\big[((X-\mu_X)+(Y-\mu_Y))^2\big]
-= \mathrm{Var}(X)+\mathrm{Var}(Y)+2\,E\big[(X-\mu_X)(Y-\mu_Y)\big].
+\begin{aligned}
+\mathrm{Var}(X+Y) &amp;= E\big[((X-\mu_X)+(Y-\mu_Y))^2\big]
+\\&amp;= \mathrm{Var}(X)+\mathrm{Var}(Y)+2\,E\big[(X-\mu_X)(Y-\mu_Y)\big].
+\end{aligned}
 \]</span> Expanding the cross term and applying the fact above, <span class="math display">\[
-E\big[(X-\mu_X)(Y-\mu_Y)\big] = E[XY]-\mu_X\mu_Y = E[X]E[Y]-E[X]E[Y] = 0,
-\]</span> so <span class="math inline">\(\mathrm{Var}(X+Y)=\mathrm{Var}(X)+\mathrm{Var}(Y)\)</span>.</p>
+E\big[(X-\mu_X)(Y-\mu_Y)\big] = E[XY]-\mu_X\mu_Y = E[X]E[Y]-E[X]E[Y] = 0.
+\]</span></p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3699,27 +3628,27 @@ E[\bar X_n] = \frac1n\sum_{i=1}^n E[X_i] = \mu
 <div id="1548a3dc" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-08T04:48:33.090674Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-08T04:48:33.090487Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-08T04:48:33.691861Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-08T04:48:33.690771Z&quot;}" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">151</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n_values <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>])</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>repetitions <span class="op">=</span> <span class="dv">20_000</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>sigma_sq <span class="op">=</span> np.var(np.arange(<span class="dv">1</span>, <span class="dv">7</span>))  <span class="co"># variance of a single fair die roll</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>empirical_var <span class="op">=</span> []</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> n_values:</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    sample_means <span class="op">=</span> rng.integers(<span class="dv">1</span>, <span class="dv">7</span>, size<span class="op">=</span>(repetitions, n)).mean(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    empirical_var.append(sample_means.var())</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>empirical_var <span class="op">=</span> np.array(empirical_var)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">5.5</span>, <span class="fl">3.5</span>))</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>ax.loglog(n_values, empirical_var, <span class="st">&#39;o&#39;</span>, label<span class="op">=</span><span class="vs">r&#39;empirical $\mathrm</span><span class="sc">{Var}</span><span class="vs">(\bar X_n)$&#39;</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>ax.loglog(n_values, sigma_sq <span class="op">/</span> n_values, <span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="vs">r&#39;$\sigma^2/n$&#39;</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&#39;$n$&#39;</span>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&#39;variance&#39;</span>)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">151</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>n_values <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>])</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>repetitions <span class="op">=</span> <span class="dv">20_000</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sigma_sq <span class="op">=</span> np.var(np.arange(<span class="dv">1</span>, <span class="dv">7</span>))  <span class="co"># variance of a single fair die roll</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>empirical_var <span class="op">=</span> []</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> n_values:</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    sample_means <span class="op">=</span> rng.integers(<span class="dv">1</span>, <span class="dv">7</span>, size<span class="op">=</span>(repetitions, n)).mean(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    empirical_var.append(sample_means.var())</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>empirical_var <span class="op">=</span> np.array(empirical_var)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">5.5</span>, <span class="fl">3.5</span>))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>ax.loglog(n_values, empirical_var, <span class="st">&#39;o&#39;</span>, label<span class="op">=</span><span class="vs">r&#39;empirical $\mathrm</span><span class="sc">{Var}</span><span class="vs">(\bar X_n)$&#39;</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>ax.loglog(n_values, sigma_sq <span class="op">/</span> n_values, <span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="vs">r&#39;$\sigma^2/n$&#39;</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&#39;$n$&#39;</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&#39;variance&#39;</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -3729,19 +3658,6 @@ E[\bar X_n] = \frac1n\sum_{i=1}^n E[X_i] = \mu
 </div>
 </div>
 </div>
-</section>
-<section id="example-unbiasedness-of-randomized-trace-estimation" class="level2">
-<h2 class="anchored" data-anchor-id="example-unbiasedness-of-randomized-trace-estimation">Example: unbiasedness of randomized trace estimation</h2>
-<p>Recall the randomized trace estimator: for <span class="math inline">\(A\in\mathbb R^{n\times n}\)</span>, draw <span class="math inline">\(z\in\{-1,+1\}^n\)</span> with i.i.d. Rademacher entries and set <span class="math inline">\(\tau = z^\top A z = \sum_{i,j} z_iz_j A_{ij}\)</span>. We’ll now prove <span class="math inline">\(E[\tau]=\mathrm{tr}(A)\)</span> – this is called <strong>unbiasedness</strong>.</p>
-<p>By linearity, <span class="math inline">\(E[\tau] = \sum_{i,j}A_{ij}\,E[z_iz_j]\)</span>. Split into diagonal and off-diagonal terms:</p>
-<ul>
-<li><strong>Diagonal (<span class="math inline">\(i=j\)</span>):</strong> <span class="math inline">\(z_i^2=1\)</span> always, so <span class="math inline">\(E[z_i^2]=1\)</span>.</li>
-<li><strong>Off-diagonal (<span class="math inline">\(i\ne j\)</span>):</strong> <span class="math inline">\(z_i,z_j\)</span> independent, so by today’s fact, <span class="math inline">\(E[z_iz_j]=E[z_i]E[z_j] = 0\cdot 0=0\)</span> (Rademacher has mean <span class="math inline">\(0\)</span>).</li>
-</ul>
-<p><span class="math display">\[
-E[\tau] = \sum_i A_{ii}\cdot 1 + \sum_{i\ne j} A_{ij}\cdot 0 = \sum_i A_{ii}
-= \mathrm{tr}(A).
-\]</span></p>
 </section>
 
 </main>
