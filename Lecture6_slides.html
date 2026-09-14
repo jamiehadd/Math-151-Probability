@@ -1503,55 +1503,6 @@ X\sim\text{Exponential}(\lambda): \quad F_X(x) = 1-e^{-\lambda x}, \qquad x\ge 0
 </div>
 </div>
 </div>
-</section>
-<section id="example-continuous-rv-in-randomized-trace-estimation" class="slide level2">
-<h2>Example: continuous RV in randomized trace estimation</h2>
-<p>Recall the randomized trace estimator: for <span class="math inline">A\in\mathbb R^{n\times n}</span>, draw <span class="math inline">z\in\mathbb R^n</span> with i.i.d. mean-<span class="math inline">0</span>, variance-<span class="math inline">1</span>, pairwise independent entries and set <span class="math inline">\tau = z^\top A z</span>. The unbiasedness proof only ever used <span class="math display">
-E[z_i^2] = 1 \qquad\text{and}\qquad E[z_iz_j] = 0 \ (i\ne j),
-</span> which followed from mean <span class="math inline">0</span>, variance <span class="math inline">1</span>, and pairwise independence — <strong>nothing about <span class="math inline">z_i</span> being discrete</strong>. So a continuous <span class="math inline">z_i</span> works exactly as well.</p>
-<div class="fragment">
-<div class="callout callout-tip callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>A continuous alternative</strong></p>
-</div>
-<div class="callout-content">
-<p>Instead of Rademacher entries <span class="math inline">z_i=\pm1</span>, draw <span class="math inline">z_i</span> i.i.d. from a continuous distribution with mean <span class="math inline">0</span> and variance <span class="math inline">1</span> — for concreteness, the (bell-shaped) standard Gaussian, whose PDF we’ll meet formally in a later lecture. The same proof works exactly, just a different distribution!</p>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="slide level2">
-
-<div id="6f2eaf59" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-08T05:01:36.029398Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-08T05:01:36.029170Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-08T05:01:36.226671Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-08T05:01:36.225256Z&quot;}" data-execution_count="5">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">151</span>)</span>
-<span id="cb7-2"><a href></a>d <span class="op">=</span> <span class="dv">50</span></span>
-<span id="cb7-3"><a href></a>A <span class="op">=</span> rng.standard_normal((d, d)) <span class="op">+</span> <span class="dv">5</span> <span class="op">*</span> np.eye(d)</span>
-<span id="cb7-4"><a href></a>true_trace <span class="op">=</span> np.trace(A)</span>
-<span id="cb7-5"><a href></a></span>
-<span id="cb7-6"><a href></a>num_samples <span class="op">=</span> <span class="dv">20_000</span></span>
-<span id="cb7-7"><a href></a>Z_rad <span class="op">=</span> rng.choice([<span class="op">-</span><span class="fl">1.0</span>, <span class="fl">1.0</span>], size<span class="op">=</span>(num_samples, d))  <span class="co"># discrete: Rademacher</span></span>
-<span id="cb7-8"><a href></a>Z_gauss <span class="op">=</span> rng.standard_normal((num_samples, d))          <span class="co"># continuous: standard Gaussian</span></span>
-<span id="cb7-9"><a href></a></span>
-<span id="cb7-10"><a href></a>tau_rad <span class="op">=</span> np.einsum(<span class="st">&#39;si,ij,sj-&gt;s&#39;</span>, Z_rad, A, Z_rad)</span>
-<span id="cb7-11"><a href></a>tau_gauss <span class="op">=</span> np.einsum(<span class="st">&#39;si,ij,sj-&gt;s&#39;</span>, Z_gauss, A, Z_gauss)</span>
-<span id="cb7-12"><a href></a></span>
-<span id="cb7-13"><a href></a><span class="bu">print</span>(<span class="ss">f&quot;true trace(A)                        = </span><span class="sc">{</span>true_trace<span class="sc">:.4f}</span><span class="ss">&quot;</span>)</span>
-<span id="cb7-14"><a href></a><span class="bu">print</span>(<span class="ss">f&quot;mean of tau, Rademacher z (discrete)  = </span><span class="sc">{</span>tau_rad<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">&quot;</span>)</span>
-<span id="cb7-15"><a href></a><span class="bu">print</span>(<span class="ss">f&quot;mean of tau, Gaussian z (continuous)  = </span><span class="sc">{</span>tau_gauss<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>true trace(A)                        = 250.0783
-mean of tau, Rademacher z (discrete)  = 249.9342
-mean of tau, Gaussian z (continuous)  = 249.5031</code></pre>
-</div>
-</div>
 
 </section>
     </div>
