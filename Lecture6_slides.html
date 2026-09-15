@@ -1503,7 +1503,78 @@ X\sim\text{Exponential}(\lambda): \quad F_X(x) = 1-e^{-\lambda x}, \qquad x\ge 0
 </div>
 </div>
 </div>
+</section>
+<section id="functions-of-a-continuous-rv" class="slide level2">
+<h2>Functions of a Continuous RV</h2>
+<p>While we have LOTUS for a continuous RV, we will occasionally want the PDF of a function of a continous random variable.</p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Theorem: PDF of a function of a continuous RV</strong></p>
+</div>
+<div class="callout-content">
+<p>Let <span class="math inline">X</span> be a continuous random variable and let <span class="math inline">Y = g(X)</span>, where <span class="math inline">g</span> is invertible and differentiable, with inverse <span class="math inline">h = g^{-1}</span>. Then <span class="math inline">Y</span> is continuous with density</p>
+<p><span class="math display">
+f_Y(y) = f_X(h(y))\, |h&#39;(y)|.
+</span></p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2">
 
+<h3 id="derivation-of-pdf-of-a-function-of-a-cont-rv">Derivation of PDF of a function of a cont RV</h3>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Setup</strong></p>
+</div>
+<div class="callout-content">
+<p>Let <span class="math inline">Y = g(X)</span> where <span class="math inline">g</span> is invertible and differentiable, with inverse <span class="math inline">h = g^{-1}</span>. Since <span class="math inline">g</span> is invertible and continuous, it is either strictly increasing everywhere or strictly decreasing everywhere.</p>
+</div>
+</div>
+</div>
+<p><strong>Case 1: <span class="math inline">g</span> increasing</strong> (so <span class="math inline">h</span> is increasing too, <span class="math inline">h&#39;(y) &gt; 0</span>).</p>
+<p><span class="math display">
+F_Y(y) = P(Y \le y) = P(g(X) \le y) = P(X \le h(y)) = F_X(h(y)).
+</span></p>
+<p>Differentiating both sides in <span class="math inline">y</span> (chain rule): <span class="math display">
+f_Y(y) = f_X(h(y))\, h&#39;(y) = f_X(h(y))\, |h&#39;(y)|.
+</span></p>
+</section>
+<section class="slide level2">
+
+<p><strong>Case 2: <span class="math inline">g</span> decreasing</strong> (so <span class="math inline">h</span> is decreasing too, <span class="math inline">h&#39;(y) &lt; 0</span>).</p>
+<p><span class="math display">
+F_Y(y) = P(g(X) \le y) = P(X \ge h(y)) = 1 - F_X(h(y)).
+</span></p>
+<p>Differentiating: <span class="math display">
+f_Y(y) = -f_X(h(y))\, h&#39;(y) = f_X(h(y))\, |h&#39;(y)|.
+</span></p>
+<div class="fragment">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Intuition: matching probability mass</strong></p>
+</div>
+<div class="callout-content">
+<p>An interval <span class="math inline">[x, x+dx]</span> maps under <span class="math inline">g</span> to an interval of length <span class="math inline">|h&#39;(y)|\,dy</span> near <span class="math inline">y = g(x)</span>, and <span class="math inline">g</span> carries <em>all</em> the probability mass from <span class="math inline">[x,x+dx]</span> into that image interval. It is the same probability mass, but the interval has a different width, so the density has to rescale by the local stretch factor <span class="math inline">|h&#39;(y)|</span>: <span class="math display">
+f_Y(y)\,|dy| = f_X(x)\,|dx| \;\;\Longrightarrow\;\; f_Y(y) = f_X(h(y))\,|h&#39;(y)|.
+</span></p>
+</div>
+</div>
+</div>
+
+</div>
 </section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
