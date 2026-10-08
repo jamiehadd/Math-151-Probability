@@ -3282,7 +3282,8 @@ The common story
 x_{k+1}=x_k+\frac{b_{I_k}-a_{I_k}^\top x_k}{\|a_{I_k}\|^2}\,a_{I_k}.
 \]</span></li>
 </ol>
-<p>After this step the iterate satisfies equation <span class="math inline">\(I_k\)</span> exactly, so sampling the same row twice in a row (a <strong>collision</strong>) makes no progress.</p>
+<hr>
+<p>After the <span class="math inline">\(k\)</span>th step the iterate satisfies equation <span class="math inline">\(I_k\)</span> exactly, so sampling the same row twice in a row (a <strong>collision</strong>) makes no progress.</p>
 <p>Two standard choices of PMF are the <strong>row-norm</strong> PMF <span class="math inline">\(p_i=\|a_i\|^2/\|A\|_F^2\)</span> and the <strong>uniform</strong> PMF <span class="math inline">\(p_i=1/m\)</span>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -3299,16 +3300,6 @@ Notation: the Frobenius norm
 \]</span></p>
 </div>
 </div>
-<section id="with-vs.-without-replacement" class="level2">
-<h2 class="anchored" data-anchor-id="with-vs.-without-replacement">With vs. without replacement</h2>
-<p>Standard randomized Kaczmarz (RK) draws a fresh row index <span class="math inline">\(I_k\sim p\)</span> at <em>every</em> iteration, without consideration for past draws – <strong>sampling with replacement</strong>. A natural alternative cycles through a random reordering of the rows each epoch, never repeating a row until every row has been used – <strong>sampling without replacement</strong>. Conditional probability lets us see these are different.</p>
-<p><span class="math inline">\(P_{\text{with replacement}}(I_2 = 7 \mid I_1 = 7) = p_7\)</span></p>
-<p><span class="math inline">\(P_{\text{without replacement}}(I_2 = 7 \mid I_1 = 7) = 0\)</span></p>
-<p>With replacement, conditioning on <span class="math inline">\(I_1\)</span> doesn’t change the probability for <span class="math inline">\(I_2\)</span> at all. Without replacement, it changes it all the way to zero.</p>
-<p>Equivalently: with replacement makes consecutive draws <em>independent</em>, so the joint PMF <strong>factors</strong>, <span class="math display">\[
-p_{I_1,I_2}(i,j) = p_I(i)\,p_I(j),
-\]</span> whereas without replacement the second draw’s distribution depends on the first, and the joint PMF does <strong>not</strong> factor.</p>
-</section>
 <section id="collision-probability-in-randomized-kaczmarz" class="level2">
 <h2 class="anchored" data-anchor-id="collision-probability-in-randomized-kaczmarz">Collision probability in randomized Kaczmarz</h2>
 <p>Suppose two consecutive iterations sample rows <span class="math inline">\(I_1,I_2\)</span> <strong>independently</strong>, each <span class="math inline">\(\sim p\)</span> (with replacement). What’s the probability the algorithm samples the <strong>same row twice in a row</strong> – a <em>collision</em>?</p>
@@ -3331,7 +3322,7 @@ Theorem: Collision probability
 <summary>
 Proof:
 </summary>
-Condition on <span class="math inline">\(I_1\)</span>, applying the law of total probability with partitioning on the value of <span class="math inline">\(I_1\)</span>: <span class="math display">\[P(I_1=I_2) = \sum_{i=1}^m P(I_2=i\mid I_1=i)\,P(I_1=i) = \sum_{i=1}^m P(I_2=i)\,p_i = \sum_{i=1}^m p_i\cdot p_i = \sum_{i=1}^m p_i^2,\]</span> using independence of <span class="math inline">\(I_1,I_2\)</span> for <span class="math inline">\(P(I_2=i\mid I_1=i)=P(I_2=i)=p_i\)</span>. <span class="math inline">\(\blacksquare\)</span>
+Condition on <span class="math inline">\(I_1\)</span>, applying the law of total probability with partitioning on the value of <span class="math inline">\(I_1\)</span>: <span class="math display">\[P(I_1=I_2) = \sum_{i=1}^m P(I_2=i\mid I_1=i)\,P(I_1=i) = \sum_{i=1}^m P(I_2=i)\,p_i = \sum_{i=1}^m p_i^2,\]</span> using independence of <span class="math inline">\(I_1,I_2\)</span> for <span class="math inline">\(P(I_2=i\mid I_1=i)=P(I_2=i)=p_i\)</span>. <span class="math inline">\(\blacksquare\)</span>
 </details>
 <p><strong>Why we care:</strong> if row <span class="math inline">\(i\)</span> is sampled twice in a row, the second projection doesn’t update the iterate – the iterate already satisfies <span class="math inline">\(a_i^\top x=b_i\)</span> exactly after the first projection, so the second step makes <em>zero</em> progress toward <span class="math inline">\(x^\star\)</span>. A high collision probability means wasted iterations.</p>
 <div class="callout callout-style-default callout-warning no-icon callout-titled">
@@ -3347,62 +3338,41 @@ Fact
 <p>The collision probability <span class="math inline">\(\sum_i p_i^2\)</span> is <strong>minimized</strong> by the <em>uniform</em> distribution <span class="math inline">\(p_i=1/m\)</span> (giving <span class="math inline">\(\sum_i p_i^2=1/m\)</span>, the smallest possible value: <span class="math inline">\(1=(\sum_i p_i)^2 \le m\sum_i p_i^2\)</span> by Cauchy-Schwarz), and <strong>maximized</strong> at <span class="math inline">\(1\)</span> when all the probability mass sits on a single row. So concentrating the sampling distribution on a subset of rows comes at the cost of more wasted iterations.</p>
 </div>
 </div>
-</section>
-<section id="same-marginals-different-dependence" class="level2">
-<h2 class="anchored" data-anchor-id="same-marginals-different-dependence">Same marginals, different dependence</h2>
-<p>Take <strong>uniform</strong> sampling, <span class="math inline">\(p_i=1/m\)</span>, and compare the joint PMF of <span class="math inline">\((I_1,I_2)\)</span> in the two schemes.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th>with replacement</th>
-<th>without replacement</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><span class="math inline">\(p_{I_1,I_2}(i,j)\)</span>, <span class="math inline">\(i\ne j\)</span></td>
-<td><span class="math inline">\(\dfrac{1}{m^2}\)</span></td>
-<td><span class="math inline">\(\dfrac{1}{m(m-1)}\)</span></td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\(p_{I_1,I_2}(i,i)\)</span></td>
-<td><span class="math inline">\(\dfrac{1}{m^2}\)</span></td>
-<td><span class="math inline">\(0\)</span></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Marginal of <span class="math inline">\(I_2\)</span> without replacement:</strong> sum the joint PMF over <span class="math inline">\(i\)</span>, <span class="math display">\[
+<!-- ## Same marginals, different dependence
+
+Take **uniform** sampling, $p_i=1/m$, and compare the joint PMF of $(I_1,I_2)$ in the two schemes.
+
+| | with replacement | without replacement |
+|---|---|---|
+| $p_{I_1,I_2}(i,j)$, $i\ne j$ | $\dfrac{1}{m^2}$ | $\dfrac{1}{m(m-1)}$ |
+| $p_{I_1,I_2}(i,i)$ | $\dfrac{1}{m^2}$ | $0$ |
+
+. . .
+
+**Marginal of $I_2$ without replacement:** sum the joint PMF over $i$,
+$$
 p_{I_2}(j) = \sum_{i\ne j}\frac{1}{m(m-1)} = \frac{m-1}{m(m-1)} = \frac1m.
-\]</span> The marginal is <strong>still uniform</strong> – looking at <span class="math inline">\(I_2\)</span> alone, you can’t tell which scheme was used.</p>
-<hr>
-<p><strong>But the draws are dependent.</strong> Let <span class="math inline">\(U=\mathbf 1\{I_1=i\}\)</span> and <span class="math inline">\(V=\mathbf 1\{I_2=i\}\)</span>. Then <span class="math inline">\(E[U]=E[V]=1/m\)</span>, and</p>
-<ul>
-<li>with replacement: <span class="math inline">\(E[UV]=P(I_1=i,I_2=i)=1/m^2\)</span>, so <span class="math inline">\(\mathrm{Cov}(U,V)=0\)</span>.</li>
-<li>without replacement: <span class="math inline">\(E[UV]=0\)</span>, so <span class="math display">\[
+$$
+The marginal is **still uniform** -- looking at $I_2$ alone, you can't tell which scheme was used.
+
+---
+
+**But the draws are dependent.** Let $U=\mathbf 1\{I_1=i\}$ and $V=\mathbf 1\{I_2=i\}$. Then $E[U]=E[V]=1/m$, and
+
+- with replacement: $E[UV]=P(I_1=i,I_2=i)=1/m^2$, so $\mathrm{Cov}(U,V)=0$.
+- without replacement: $E[UV]=0$, so
+$$
 \mathrm{Cov}(U,V) = 0-\frac1{m^2} = -\frac1{m^2},
 \qquad
 \rho(U,V) = \frac{-1/m^2}{\tfrac1m\left(1-\tfrac1m\right)} = -\frac{1}{m-1}.
-\]</span></li>
-</ul>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Message
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Same marginals, different dependence. Marginal distributions alone don’t determine the joint distribution – the covariance picks up what they miss.</p>
-</div>
-</div>
+$$
+
+. . .
+
+::: {.callout-tip}
+## Message
+Same marginals, different dependence. Marginal distributions alone don't determine the joint distribution -- the covariance picks up what they miss.
+::: -->
 <hr>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -3421,27 +3391,31 @@ Exercise 1: Bayes’ rule on collisions
 </ol>
 </div>
 </div>
-</section>
-<section id="is-the-randomized-kaczmarz-error-discrete" class="level2">
-<h2 class="anchored" data-anchor-id="is-the-randomized-kaczmarz-error-discrete">Is the randomized Kaczmarz error discrete?</h2>
-<p>Recall randomized Kaczmarz (RK), solving <span class="math inline">\(Ax = b\)</span>: at each step we sample a row index <span class="math inline">\(I \in \{1,\dots,m\}\)</span> at random and update <span class="math display">\[
+<!-- ## Is the randomized Kaczmarz error discrete?
+
+Recall randomized Kaczmarz (RK), solving $Ax = b$: at each step we sample a row index
+$I \in \{1,\dots,m\}$ at random and update
+$$
 x_{k+1} = x_k + \frac{b_I - a_I^\top x_k}{\lVert a_I \rVert^2}\, a_I .
-\]</span></p>
-<p><span class="math inline">\(I\)</span> is clearly a <strong>discrete</strong> RV – only <span class="math inline">\(m\)</span> possible values.</p>
-<p>But consider <span class="math inline">\(E = \lVert x_{k+1} - x^\star \rVert\)</span>, the error <em>after</em> this step. For fixed <span class="math inline">\(x_k\)</span>, <span class="math inline">\(E\)</span> looks continuous: it’s a norm of a real vector, and could in principle be any real number.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Functions of discrete RVs are discrete!
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><span class="math inline">\(E\)</span> is a <strong>function of the discrete RV <span class="math inline">\(I\)</span></strong>: <span class="math inline">\(E = h(I)\)</span> for some function <span class="math inline">\(h\)</span>. Since <span class="math inline">\(I\)</span> takes only <span class="math inline">\(m\)</span> values, <span class="math inline">\(E\)</span> <em>also</em> has a range of at most <span class="math inline">\(m\)</span> values – even though each of those <span class="math inline">\(m\)</span> values is an arbitrary real number, not an integer. <strong>Discreteness is about the size of the range, not about the values themselves.</strong></p>
-</div>
-</div>
+$$
+
+$I$ is clearly a **discrete** RV -- only $m$ possible values.
+
+. . .
+
+But consider $E = \lVert x_{k+1} - x^\star \rVert$, the error *after* this step. For fixed
+$x_k$, $E$ looks continuous: it's a norm of a real vector, and could in principle be any
+real number.
+
+. . .
+
+::: {.callout-tip}
+## Functions of discrete RVs are discrete!
+$E$ is a **function of the discrete RV $I$**: $E = h(I)$ for some function $h$. Since $I$
+takes only $m$ values, $E$ *also* has a range of at most $m$ values -- even though each of
+those $m$ values is an arbitrary real number, not an integer. **Discreteness is
+about the size of the range, not about the values themselves.**
+::: -->
 </section>
 <section id="lotus-why-the-row-norm-pmf" class="level2">
 <h2 class="anchored" data-anchor-id="lotus-why-the-row-norm-pmf">LOTUS: why the row-norm PMF?</h2>
@@ -3473,8 +3447,8 @@ E\big[\|x_{k+1}-x^\star\|^2\big] \;\le\; \left(1 - \frac{\sigma_{\min}(A)^2}{\|A
 </section>
 <section id="watching-the-bound-play-out-over-many-steps" class="level2">
 <h2 class="anchored" data-anchor-id="watching-the-bound-play-out-over-many-steps">Watching the bound play out over many steps</h2>
-<p>The one-step bound says the expected squared error shrinks by a fixed factor <em>every</em> step. Let’s actually run RK and watch <span class="math inline">\(\|x_k-x^\star\|^2\)</span> fall, averaged over many independent random runs.</p>
-<div id="c010" class="cell" data-execution_count="8">
+<p>The one-step bound says the expected squared error shrinks by a fixed factor <em>every</em> step. Let’s actually run RK and watch <span class="math inline">\(\|x_k-x^\star\|^2\)</span> decrease and compare it to the bound.</p>
+<div id="c010" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -3544,18 +3518,25 @@ E\big[\|x_k-x^\star\|^2\big] \le (1-c)^k \|x_0-x^\star\|^2,
 </section>
 <section id="uniform-vs.-row-norm-sampling-the-distribution-controls-the-rate" class="level2">
 <h2 class="anchored" data-anchor-id="uniform-vs.-row-norm-sampling-the-distribution-controls-the-rate">Uniform vs. row-norm sampling: the distribution controls the rate</h2>
-<p>What if we sample rows <strong>uniformly</strong>, <span class="math inline">\(p_I(i)=1/m\)</span>? Redo the LOTUS computation – now the <span class="math inline">\(\|a_i\|^2\)</span> does <em>not</em> cancel: <span class="math display">\[
+<!-- What if we sample rows **uniformly**, $p_I(i)=1/m$? Redo the LOTUS computation -- now the $\|a_i\|^2$ does *not* cancel:
+$$
 E\!\left[\frac{(a_I^\top v)^2}{\|a_I\|^2}\right]
 =\frac1m\sum_{i=1}^m\frac{(a_i^\top v)^2}{\|a_i\|^2}
 \;\ge\;\frac{1}{m\,\max_i\|a_i\|^2}\sum_{i=1}^m (a_i^\top v)^2
 =\frac{\|Av\|^2}{m\max_i\|a_i\|^2}.
-\]</span></p>
-<p>So by the same argument as before, <span class="math display">\[
+$$
+
+. . .
+
+So by the same argument as before,
+$$
 E\big[\|x_{k+1}-x^\star\|^2\big]\le\left(1-\frac{\sigma_{\min}(A)^2}{m\max_i\|a_i\|^2}\right)\|x_k-x^\star\|^2.
-\]</span> Since <span class="math inline">\(m\max_i\|a_i\|^2\ge\|A\|_F^2\)</span>, with equality only when all row norms are equal, this <strong>guaranteed</strong> rate is never better than the row-norm one, and is much worse when the row norms are very unequal.</p>
-<hr>
-<p>Let’s run both samplers on a matrix whose row norms vary by orders of magnitude, and compare each empirical curve with its bound.</p>
-<div id="c014" class="cell" data-execution_count="9">
+$$
+Since $m\max_i\|a_i\|^2\ge\|A\|_F^2$, with equality only when all row norms are equal, this **guaranteed** rate is never better than the row-norm one, and is much worse when the row norms are very unequal.
+
+--- -->
+<p>One can prove a similar (but worse) bound for the error for uniform sampling. Let’s run both samplers on a matrix whose row norms vary by orders of magnitude, and compare each empirical curve with its bound.</p>
+<div id="c014" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">151</span>)</span>
@@ -3609,6 +3590,7 @@ E\big[\|x_{k+1}-x^\star\|^2\big]\le\left(1-\frac{\sigma_{\min}(A)^2}{m\max_i\|a_
 </div>
 </div>
 </div>
+<hr>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3650,7 +3632,6 @@ Exercise 2: distinct rows
 <section id="example-unbiasedness-of-randomized-trace-estimation" class="level2">
 <h2 class="anchored" data-anchor-id="example-unbiasedness-of-randomized-trace-estimation">Example: unbiasedness of randomized trace estimation</h2>
 <p>We’ll now prove <span class="math inline">\(E[\tau]=\mathrm{tr}(A)\)</span> – recall this is called <strong>unbiasedness</strong>.</p>
-<p>We’ll use one fact: if <span class="math inline">\(X,Y\)</span> are <strong>independent</strong>, then <span class="math inline">\(E[XY]=E[X]\,E[Y]\)</span>.</p>
 <p>By linearity, <span class="math inline">\(E[\tau] = \sum_{i,j}A_{ij}\,E[z_iz_j]\)</span>. Split into diagonal and off-diagonal terms:</p>
 <ul>
 <li><strong>Diagonal (<span class="math inline">\(i=j\)</span>):</strong> <span class="math inline">\(z_i^2=1\)</span> always, so <span class="math inline">\(E[z_i^2]=1\)</span>.</li>
@@ -3660,6 +3641,7 @@ Exercise 2: distinct rows
 E[\tau] = \sum_i A_{ii}\cdot 1 + \sum_{i\ne j} A_{ij}\cdot 0 = \sum_i A_{ii}
 = \mathrm{tr}(A).
 \]</span></p>
+<hr>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3697,7 +3679,7 @@ A continuous alternative
 <p>Instead of Rademacher entries <span class="math inline">\(z_i=\pm1\)</span>, draw <span class="math inline">\(z_i\)</span> i.i.d. from a continuous distribution with mean <span class="math inline">\(0\)</span> and variance <span class="math inline">\(1\)</span> – the standard normal <span class="math inline">\(N(0,1)\)</span> (the Gaussian). The same proof works exactly, just a different distribution!</p>
 </div>
 </div>
-<div id="c019" class="cell" data-execution_count="10">
+<div id="c019" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">151</span>)</span>
@@ -3728,6 +3710,7 @@ mean of tau, Gaussian z (continuous)  = 249.5031</code></pre>
 <p>Unbiased is not enough – a single sample of <span class="math inline">\(\tau\)</span> could be far from <span class="math inline">\(\mathrm{tr}(A)\)</span>. Let <span class="math inline">\(A\)</span> be <strong>symmetric</strong>, so <span class="math inline">\(A_{ij}=A_{ji}\)</span> and <span class="math display">\[
 \tau=\sum_i A_{ii}z_i^2+2\sum_{i&lt;j}A_{ij}z_iz_j=\mathrm{tr}(A)+2\sum_{i&lt;j}A_{ij}z_iz_j
 \]</span> for Rademacher <span class="math inline">\(z\)</span> (since <span class="math inline">\(z_i^2=1\)</span>). The first term is a constant, so only the cross terms contribute to the variance.</p>
+<hr>
 <p><strong>Variance of the Rademacher estimator.</strong> For symmetric <span class="math inline">\(A\)</span>, we have <span class="math display">\[
 \mathrm{Var}(\tau)=4\,\mathrm{Var}\Big(\sum_{i&lt;j}A_{ij}\,z_iz_j\Big).
 \]</span></p>
@@ -3738,6 +3721,7 @@ mean of tau, Gaussian z (continuous)  = 249.5031</code></pre>
 <li><strong>Pairwise uncorrelated.</strong> For distinct pairs <span class="math inline">\(\{i,j\}\ne\{k,l\}\)</span>, the product <span class="math inline">\(W_{ij}W_{kl}\)</span> has at least one index appearing exactly once. On the other hand, if <span class="math inline">\(j=k\)</span> then <span class="math inline">\(W_{ij}W_{jl}=z_iz_j^2z_l=z_iz_l\)</span> with <span class="math inline">\(i\neq l\)</span>. So <span class="math inline">\(E[W_{ij}W_{kl}]\)</span> is a product of terms including <span class="math inline">\(E[z_m]=0\)</span>, and <span class="math inline">\(\mathrm{Cov}(W_{ij},W_{kl})=0\)</span>.</li>
 </ul>
 <p>(They are <em>not</em> mutually independent: <span class="math inline">\(W_{12}W_{13}W_{23}=1\)</span> always. We only need uncorrelated, since variances add for uncorrelated summands.)</p>
+<hr>
 <p>So variances of the sum add: <span class="math display">\[
 \mathrm{Var}(\tau)=4\sum_{i&lt;j}A_{ij}^2\,\mathrm{Var}(W_{ij})=4\sum_{i&lt;j}A_{ij}^2=2\sum_{i\ne j}A_{ij}^2,
 \]</span> where the last step uses <span class="math inline">\(\sum_{i\ne j}A_{ij}^2=2\sum_{i&lt;j}A_{ij}^2\)</span> by symmetry.</p>
@@ -3777,7 +3761,7 @@ Exercise 4: variance of the Gaussian estimator
 <p>Since <span class="math inline">\(\|A\|_F^2=\sum_i A_{ii}^2+\sum_{i\ne j}A_{ij}^2\)</span>, the two variances differ by <span class="math display">\[
 \mathrm{Var}(\tau_{\text{Gauss}})-\mathrm{Var}(\tau_{\text{Rad}})=2\sum_i A_{ii}^2\;\ge 0.
 \]</span> Rademacher always has smaller variance, and it wins by the most when <span class="math inline">\(A\)</span> has a heavy diagonal. If <span class="math inline">\(A\)</span> has zero diagonal, the two are identical. Let’s check on a diagonal-dominant matrix and on one with zero diagonal.</p>
-<div id="c023" class="cell" data-execution_count="11">
+<div id="c023" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">151</span>)</span>
@@ -3813,7 +3797,9 @@ zero diagonal
 <h1>Part C: Randomized matrix multiplication</h1>
 <p>Let <span class="math inline">\(A\in\mathbb R^{m\times n}\)</span> and <span class="math inline">\(B\in\mathbb R^{n\times q}\)</span>. Write <span class="math inline">\(a_j\)</span> for the <span class="math inline">\(j\)</span>-th <strong>column</strong> of <span class="math inline">\(A\)</span> and <span class="math inline">\(b_j^\top\)</span> for the <span class="math inline">\(j\)</span>-th <strong>row</strong> of <span class="math inline">\(B\)</span>. Then <span class="math display">\[
 AB=\sum_{j=1}^n a_j b_j^\top,
-\]</span> a sum of <span class="math inline">\(n\)</span> rank-one outer products. Computing all of them is expensive, so <strong>sample</strong>:</p>
+\]</span> a sum of <span class="math inline">\(n\)</span> rank-one outer products.</p>
+<hr>
+<p>Computing all of them is expensive, so <strong>sample</strong>:</p>
 <ul>
 <li>draw <span class="math inline">\(J\sim p\)</span> on <span class="math inline">\(\{1,\dots,n\}\)</span>,</li>
 <li>form <span class="math inline">\(X=\dfrac{1}{p_J}\,a_Jb_J^\top\)</span>,</li>
@@ -3831,13 +3817,14 @@ E[X]=\sum_{j=1}^n \frac{1}{p_j}\,a_jb_j^\top\;p_j=\sum_{j=1}^n a_jb_j^\top=AB.
 <li>We need <span class="math inline">\(p_j&gt;0\)</span> wherever <span class="math inline">\(a_jb_j^\top\ne0\)</span>; otherwise those terms are never sampled and the estimator is biased.</li>
 <li>Unbiasedness holds for <strong>every</strong> valid <span class="math inline">\(p\)</span>, so the choice of <span class="math inline">\(p\)</span> will only affect the <strong>variance</strong>.</li>
 </ul>
+<hr>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 5: variance of randomized matrix multiplication
+(Not on HW) Exercise 5: variance of randomized matrix multiplication
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -3860,6 +3847,7 @@ Exercise 5: variance of randomized matrix multiplication
 \qquad\text{giving}\qquad
 E\|AB-\hat C\|_F^2=\frac1c\Big(\big(\textstyle\sum_j w_j\big)^2-\|AB\|_F^2\Big).
 \]</span></p>
+<hr>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
