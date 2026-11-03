@@ -3253,23 +3253,11 @@ window.Quarto = {
 
 <section id="the-poisson-process" class="level1">
 <h1>The Poisson Process</h1>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Question
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Crashes at a busy intersection occur at <em>random times</em>. How should we model</p>
+<p>Car crashes at a busy intersection occur at <em>random times</em>. What is a good model for</p>
 <ul>
 <li><strong>when</strong> crashes happen, and</li>
 <li><strong>how many</strong> crashes happen in a given window of time?</li>
 </ul>
-</div>
-</div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3285,12 +3273,13 @@ Reasonable modeling assumptions
 <li>What happens in one window of time tells us nothing about a disjoint window.</li>
 <li>In a very short window, we see at most one crash.</li>
 </ul>
+</div>
+</div>
 <p>This is the <strong>Bernoulli process</strong> with time chopped into many tiny slots.</p>
-</div>
-</div>
-<p>But, how tiny does it need to be so that in reality each window has at most one crash? Here, a continuous model would be more natural!</p>
+<p>But, how tiny do slots need to be so that in reality each window has at most one crash? Here, a continuous model would be more natural!</p>
 <section id="poisson-process-definition" class="level2">
 <h2 class="anchored" data-anchor-id="poisson-process-definition">Poisson process: definition</h2>
+<p>Define <span class="math inline">\(P(k,\tau) = P(\text{there are exactly } k \text{ arrivals during an interval of length } \tau).\)</span></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3301,27 +3290,16 @@ Definition
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>An arrival process with <strong>arrival rate</strong> <span class="math inline">\(\lambda&gt;0\)</span> (arrivals per unit time). Let <span class="math inline">\(P(k,\tau)\)</span> be the probability of exactly <span class="math inline">\(k\)</span> arrivals in an interval of length <span class="math inline">\(\tau\)</span>. The process satisfies:</p>
+<p>An arrival process is called a <strong>Poisson process</strong> with <strong>arrival rate</strong> <span class="math inline">\(\lambda&gt;0\)</span> (arrivals per unit time) if it satisfies:</p>
 <ol type="1">
-<li><strong>Time homogeneity:</strong> <span class="math inline">\(P(k,\tau)\)</span> is the same for every interval of length <span class="math inline">\(\tau\)</span>.</li>
-<li><strong>Independence:</strong> the numbers of arrivals in disjoint intervals are independent.</li>
-<li><strong>Small intervals</strong> (length <span class="math inline">\(\delta\to 0\)</span>): <span class="math display">\[P(0,\delta)=1-\lambda\delta+o(\delta),\qquad P(1,\delta)=\lambda\delta+o(\delta),\qquad P(k\ge2,\delta)=o(\delta).\]</span></li>
+<li><strong>Time homogeneity:</strong> probability <span class="math inline">\(P(k,\tau)\)</span> of <span class="math inline">\(k\)</span> arrivals is the same for every interval of length <span class="math inline">\(\tau\)</span>.</li>
+<li><strong>Independence:</strong> the numbers of arrivals during a particular interval is independent of the history of arrivals outside of this interval.</li>
+<li><strong>Small interval probabilities:</strong> the probabilities satisfy <span class="math display">\[P(0, \tau)=1 - \lambda \tau + o_{0}(\tau),\qquad P(1, \tau)= \lambda \tau + o_{1}(\tau),\qquad P(k \ge 2, \tau) = o_{k}(\tau) \]</span> where <span class="math inline">\(o_i(\tau)\)</span> is a function of <span class="math inline">\(\tau\)</span> that satisfies <span class="math inline">\(\lim_{\tau \rightarrow 0} \frac{o_i(\tau)}{\tau} = 0\)</span>.<br>
+</li>
 </ol>
 </div>
 </div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Reading the definition
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><span class="math inline">\(\lambda\delta\)</span> plays the role of the Bernoulli success probability <span class="math inline">\(p\)</span> in a tiny slot, and <span class="math inline">\(o(\delta)\)</span> means “negligible compared to <span class="math inline">\(\delta\)</span>”.</p>
-</div>
-</div>
+<p><span class="math inline">\(\lambda\tau\)</span> plays the role of the Bernoulli success probability <span class="math inline">\(p\)</span> in a tiny slot, and since <span class="math inline">\(o_i(\tau)\)</span> is negligible compared to <span class="math inline">\(\tau\)</span>, the probabiity of seeing two or more arrivals in a single window is negligible as <span class="math inline">\(\tau\)</span> becomes small.</p>
 </section>
 <section id="number-of-arrivals-in-an-interval" class="level2">
 <h2 class="anchored" data-anchor-id="number-of-arrivals-in-an-interval">Number of Arrivals in an Interval</h2>
@@ -3335,22 +3313,13 @@ Derivation
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Chop <span class="math inline">\([0,\tau]\)</span> into <span class="math inline">\(n=\tau/\delta\)</span> slots. Each slot is an independent Bernoulli trial with success probability <span class="math display">\[p=\lambda\delta=\frac{\lambda\tau}{n},\]</span> so the number of arrivals <span class="math inline">\(N_\tau\sim\text{Binomial}(n,p)\)</span>.</p>
+<p>Chop <span class="math inline">\([0,\tau]\)</span> into <span class="math inline">\(n=\tau/\delta\)</span> slots. Each slot is an independent Bernoulli trial with success probability <span class="math display">\[p=\lambda\delta=\frac{\lambda\tau}{n},\]</span> so the number of arrivals in <span class="math inline">\([0,\tau]\)</span>, <span class="math inline">\(N_\tau\sim\text{Binomial}(n,p)\)</span>.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Let <span class="math inline">\(n\to\infty\)</span> with <span class="math inline">\(np=\lambda\tau\)</span> fixed
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><span class="math display">\[\binom{n}{k}p^k(1-p)^{n-k}\;\longrightarrow\;\frac{(\lambda\tau)^k}{k!}e^{-\lambda\tau}.\]</span> We saw this limit in Lecture 3; here is where it comes from.</p>
-</div>
-</div>
+<p>Let <span class="math inline">\(n\to\infty\)</span> with <span class="math inline">\(np=\lambda\tau\)</span> fixed:</p>
+<p><span class="math display">\[\binom{n}{k}p^k(1-p)^{n-k}\;\longrightarrow\;\frac{(\lambda\tau)^k}{k!}e^{-\lambda\tau}.\]</span></p>
+<p><span class="math inline">\(N_\tau \rightarrow \text{Poisson}(\lambda \tau)\)</span>!</p>
+<hr>
 <div id="6c4646ee" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-11-02T18:28:51.792567Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-02T18:28:51.792295Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-02T18:28:52.342767Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-02T18:28:52.340990Z&quot;}" data-fig-height="3.4" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
@@ -3372,9 +3341,6 @@ Let <span class="math inline">\(n\to\infty\)</span> with <span class="math inlin
 </div>
 </div>
 </div>
-</section>
-<section id="poisson-pmf-mean-and-variance" class="level2">
-<h2 class="anchored" data-anchor-id="poisson-pmf-mean-and-variance">Poisson PMF, mean, and variance</h2>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3388,19 +3354,7 @@ Poisson PMF for the number of arrivals in time <span class="math inline">\(\tau\
 <p><span class="math display">\[P(N_\tau=k)=P(k,\tau)=\frac{(\lambda\tau)^k e^{-\lambda\tau}}{k!},\qquad k=0,1,2,\ldots\]</span></p>
 </div>
 </div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Mean and variance
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><span class="math display">\[E[N_\tau]=\lambda\tau,\qquad \text{Var}(N_\tau)=\lambda\tau.\]</span> These match the Binomial values <span class="math inline">\(np=\lambda\tau\)</span> and <span class="math inline">\(np(1-p)\to\lambda\tau\)</span> in the limit <span class="math inline">\(p\to0\)</span>.</p>
-</div>
-</div>
+<p>The mean and variance are <span class="math display">\[E[N_\tau]=\lambda\tau,\qquad \text{Var}(N_\tau)=\lambda\tau.\]</span> These match the Binomial values <span class="math inline">\(np=\lambda\tau\)</span> and <span class="math inline">\(np(1-p)\to\lambda\tau\)</span> in the limit <span class="math inline">\(p\to0\)</span>.</p>
 </section>
 <section id="time-of-the-first-arrival" class="level2">
 <h2 class="anchored" data-anchor-id="time-of-the-first-arrival">Time of the First Arrival</h2>
@@ -3414,22 +3368,10 @@ Tail probability
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(T_1\)</span> be the time of the first arrival. No arrival by time <span class="math inline">\(t\)</span> means zero arrivals in <span class="math inline">\([0,t]\)</span>: <span class="math display">\[P(T_1&gt;t)=P(0,t)=e^{-\lambda t},\qquad t\ge0.\]</span></p>
+<p>Let <span class="math inline">\(T\)</span> be the time of the first arrival. No arrival by time <span class="math inline">\(t\)</span> means zero arrivals in <span class="math inline">\([0,t]\)</span>: <span class="math display">\[P(T&gt;t)=P(0,t)=e^{-\lambda t},\qquad t\ge0.\]</span></p>
 </div>
 </div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-CDF <span class="math inline">\(\to\)</span> PDF
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><span class="math display">\[F_{T_1}(t)=1-e^{-\lambda t}\quad\Longrightarrow\quad f_{T_1}(t)=\frac{d}{dt}F_{T_1}(t)=\lambda e^{-\lambda t},\quad t\ge0.\]</span></p>
-</div>
-</div>
+<p>Now, we recover the PDF from the CDF: <span class="math display">\[F_{T}(t)=1-e^{-\lambda t}\quad\Longrightarrow\quad f_{T}(t)=\frac{d}{dt}F_{T}(t)=\lambda e^{-\lambda t},\quad t\ge0.\]</span></p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3440,15 +3382,12 @@ Conclusion
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="math inline">\(T_1\sim\text{Exponential}(\lambda)\)</span>, with <span class="math display">\[E[T_1]=\frac1\lambda,\qquad\text{Var}(T_1)=\frac1{\lambda^2}.\]</span></p>
+<p><span class="math inline">\(T\sim\text{Exponential}(\lambda)\)</span>, with <span class="math display">\[E[T]=\frac1\lambda,\qquad\text{Var}(T)=\frac1{\lambda^2}.\]</span></p>
 </div>
 </div>
 </section>
-</section>
-<section id="summary-bernoulli-vs.-poisson" class="level1">
-<h1>Summary: Bernoulli vs. Poisson</h1>
-<section id="two-descriptions-of-arrivals" class="level2">
-<h2 class="anchored" data-anchor-id="two-descriptions-of-arrivals">Two descriptions of arrivals</h2>
+<section id="summary-bernoulli-vs.-poisson-processes" class="level2">
+<h2 class="anchored" data-anchor-id="summary-bernoulli-vs.-poisson-processes">Summary: Bernoulli vs. Poisson Processes</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3534,9 +3473,9 @@ Solution
 </div>
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li><p><span class="math inline">\(\lambda\tau=5(0.5)=2.5\)</span>, so <span class="math inline">\(P(N=0)=e^{-2.5}\approx0.082\)</span>.</p></li>
-<li><p><span class="math inline">\(\lambda\tau=5\)</span>, so <span class="math inline">\(P(N=3)=\dfrac{5^3e^{-5}}{3!}\approx0.140\)</span>.</p></li>
-<li><p><span class="math inline">\(E[T_1]=1/\lambda=1/5\)</span> hour <span class="math inline">\(=12\)</span> minutes.</p></li>
+<li><p><span class="math inline">\(\lambda\tau=5(0.5)=2.5\)</span>, so <span class="math inline">\(P(N_{0.5}=0) = P(0,0.5)=e^{-2.5}\approx0.082\)</span>.</p></li>
+<li><p><span class="math inline">\(\lambda\tau=5\)</span>, so <span class="math inline">\(P(N_{1}=3) = P(3,1)=\dfrac{5^3e^{-5}}{3!}\approx0.140\)</span>.</p></li>
+<li><p><span class="math inline">\(E[T]=1/\lambda=1/5\)</span> hour.</p></li>
 </ol>
 </div>
 </div>
@@ -3544,32 +3483,10 @@ Solution
 </section>
 <section id="independence-and-memorylessness" class="level2">
 <h2 class="anchored" data-anchor-id="independence-and-memorylessness">Independence and Memorylessness</h2>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Fact
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>For any time <span class="math inline">\(t\)</span>, the arrivals after <span class="math inline">\(t\)</span> form a new Poisson process with the same rate <span class="math inline">\(\lambda\)</span>, <strong>independent of everything that happened before <span class="math inline">\(t\)</span></strong>.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Memorylessness of the exponential
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><span class="math display">\[P(T_1&gt;t+s\mid T_1&gt;t)=\frac{e^{-\lambda(t+s)}}{e^{-\lambda t}}=e^{-\lambda s}=P(T_1&gt;s).\]</span> Having already waited <span class="math inline">\(t\)</span> does not change how much longer we wait.</p>
-</div>
-</div>
+<ul>
+<li><em>Independence</em>: For any time <span class="math inline">\(t\)</span>, the history of the process after time <span class="math inline">\(t\)</span> is also a Poisson process with the same rate <span class="math inline">\(\lambda\)</span>, and is <strong>independent of the history of the process until time <span class="math inline">\(t\)</span></strong>.</li>
+<li><em>Memorylessness</em>: Let <span class="math inline">\(t\)</span> be a given time and let <span class="math inline">\(\bar{T}\)</span> be the time of the first arrial after time <span class="math inline">\(t.\)</span> Then <span class="math inline">\(\bar{T} - t\)</span> has an exponential distribution with parameter <span class="math inline">\(\lambda\)</span>, and is <strong>independent of the history of the process until time <span class="math inline">\(t\)</span></strong>. <span class="math display">\[P(\bar{T} - t &gt; s) = P(0 \text{ arrivals during } [t, t+s]) = P(0,s)\]</span></li>
+</ul>
 </section>
 <section id="interarrival-times" class="level2">
 <h2 class="anchored" data-anchor-id="interarrival-times">Interarrival Times</h2>
@@ -3583,9 +3500,13 @@ Definition
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(T_k\)</span> be the time of the <span class="math inline">\(k\)</span>th arrival, with <span class="math inline">\(T_0=0\)</span>. The <strong>interarrival times</strong> are <span class="math display">\[Y_k=T_k-T_{k-1},\qquad k=1,2,\ldots\]</span></p>
+<p>Let <span class="math inline">\(Y_k\)</span> be the time of the <span class="math inline">\(k\)</span>th arrival, with <span class="math inline">\(Y_0=0\)</span>. The <strong>interarrival times</strong> are <span class="math display">\[T_1 = Y_1, \qquad T_k=Y_k-Y_{k-1},\qquad k=2,3,\ldots\]</span> which represent the amount of time between the <span class="math inline">\((k-1)\)</span>st and the <span class="math inline">\(k\)</span>th arrivals.</p>
 </div>
 </div>
+<p>Note then that <span class="math display">\[Y_k = T_1 + T_2 + \cdots + T_k.\]</span></p>
+</section>
+<section id="alternative-description" class="level2">
+<h2 class="anchored" data-anchor-id="alternative-description">Alternative Description</h2>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3596,23 +3517,13 @@ Alternative description of the Poisson process
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="math inline">\(Y_1,Y_2,\ldots\)</span> are <strong>i.i.d. Exponential<span class="math inline">\((\lambda)\)</span></strong>.</p>
-<p>Conversely, drawing i.i.d. exponential gaps and placing arrivals at their running sums produces a Poisson process with rate <span class="math inline">\(\lambda\)</span>.</p>
+<ul>
+<li>Start with a sequence of independent exponential random variables, <span class="math inline">\(T_1,T_2,\ldots\)</span> <strong>i.i.d. Exponential<span class="math inline">\((\lambda)\)</span></strong>, and let these represent the interarrival times.</li>
+<li>Record an arrival at times <span class="math inline">\(T_1, T_1 + T_2, T_1 + T_2 + T_3, \cdots\)</span></li>
+</ul>
 </div>
 </div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Why
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>By the fresh-start property, the process restarts independently after each arrival, so every gap has the same law as <span class="math inline">\(T_1\)</span>.</p>
-</div>
-</div>
+<p>By the independence (fresh-start) property, the process restarts independently after each arrival, so every gap is distributed identically to <span class="math inline">\(T_1\)</span>.</p>
 </section>
 <section id="the-kth-arrival-time" class="level2">
 <h2 class="anchored" data-anchor-id="the-kth-arrival-time">The <span class="math inline">\(k\)</span>th arrival time</h2>
@@ -3626,36 +3537,11 @@ Definition
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="math display">\[T_k=Y_1+Y_2+\cdots+Y_k,\]</span> a sum of <span class="math inline">\(k\)</span> i.i.d. Exponential<span class="math inline">\((\lambda)\)</span> interarrival times.</p>
+<p><span class="math display">\[Y_k=T_1+T_2+\cdots+T_k,\]</span> a sum of <span class="math inline">\(k\)</span> i.i.d. Exponential<span class="math inline">\((\lambda)\)</span> interarrival times.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Properties (Erlang distribution)
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><span class="math display">\[f_{T_k}(y)=\frac{\lambda^ky^{k-1}e^{-\lambda y}}{(k-1)!},\quad y\ge0,\qquad E[T_k]=\frac k\lambda,\qquad\text{Var}(T_k)=\frac{k}{\lambda^2}.\]</span></p>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Derivation sketch
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>For a small <span class="math inline">\(\delta\)</span>: <span class="math inline">\(f_{T_k}(y)\,\delta\approx P(k-1\text{ arrivals in }[0,y])\cdot\lambda\delta=\dfrac{(\lambda y)^{k-1}e^{-\lambda y}}{(k-1)!}\lambda\delta.\)</span></p>
-<p>Mean and variance follow from the sum of <span class="math inline">\(k\)</span> i.i.d. exponentials.</p>
-</div>
-</div>
+<p>The mean and variance are <span class="math display">\[\mathbb{E}[Y_k] = \frac{k}{\lambda} \text{ and } \text{Var}(Y_k) = \frac{k}{\lambda^2}.\]</span></p>
+<p>The PDF of <span class="math inline">\(Y_k\)</span> is <span class="math display">\[f_{Y_k}(y)=\frac{\lambda^ky^{k-1}e^{-\lambda y}}{(k-1)!},\quad y\ge0,\]</span> which is known as the <strong>Erlang PDF of order <span class="math inline">\(k\)</span></strong>.</p>
 <section id="example-irs-hotline" class="level3">
 <h3 class="anchored" data-anchor-id="example-irs-hotline">Example: IRS hotline</h3>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -3668,10 +3554,10 @@ Example
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Calls arrive at the IRS hotline as a Poisson process with rate <span class="math inline">\(\lambda=0.5\)</span> per minute.</p>
+<p>You call the IRS hotline and are told that you are the 56th person in line. Callers depart according to a Poisson process with rate <span class="math inline">\(\lambda=2\)</span> per minute.</p>
 <ol type="a">
-<li><p>What are the mean and standard deviation of the time of the 4th call?</p></li>
-<li><p>What is the probability that the 3rd call arrives after minute 4?</p></li>
+<li>How long will you have to wait on average until your service starts?</li>
+<li>What is the probability that you will have to wait for more than 30 minutes?</li>
 </ol>
 </div>
 </div>
@@ -3686,8 +3572,8 @@ Solution
 </div>
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li><p><span class="math inline">\(E[T_4]=4/0.5=8\)</span> minutes and <span class="math inline">\(\text{SD}(T_4)=\sqrt4/0.5=4\)</span> minutes.</p></li>
-<li><p><span class="math inline">\(T_3&gt;4\)</span> exactly when at most 2 calls arrive in <span class="math inline">\([0,4]\)</span>. With <span class="math inline">\(\lambda\tau=2\)</span>, <span class="math display">\[P(T_3&gt;4)=P(N_4\le2)=e^{-2}\left(1+2+\tfrac{2^2}{2}\right)=5e^{-2}\approx0.677.\]</span></p></li>
+<li>Your waiting time is <span class="math inline">\(Y_{56}\)</span> which has mean <span class="math inline">\(56/\lambda = 28\)</span>.</li>
+<li><span class="math inline">\(P(Y_{56} \ge 30) = \int_{30}^\infty \frac{1^{56} y^{55} e^{-2y}}{55!} dy\)</span></li>
 </ol>
 </div>
 </div>
@@ -3706,7 +3592,7 @@ Exercise
 <div class="callout-body-container callout-body">
 <p>Customers arrive at a shop as a Poisson process with rate <span class="math inline">\(\lambda=6\)</span> per hour.</p>
 <ol type="a">
-<li><p>What is the probability that exactly 2 customers arrive in the next 20 minutes?</p></li>
+<li><p>What is the probability that exactly 3 customers arrive in the next 20 minutes?</p></li>
 <li><p>What is the expected time until the 3rd customer arrives?</p></li>
 <li><p>No one has arrived in the last 10 minutes. What is the probability that no one arrives in the next 10 minutes?</p></li>
 </ol>
@@ -3723,9 +3609,9 @@ Solution
 </div>
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li><p><span class="math inline">\(\lambda\tau=6\cdot\tfrac13=2\)</span>, so <span class="math inline">\(P=\dfrac{2^2e^{-2}}{2!}=2e^{-2}\approx0.271\)</span>.</p></li>
-<li><p><span class="math inline">\(E[T_3]=3/6=0.5\)</span> hours <span class="math inline">\(=30\)</span> minutes.</p></li>
-<li><p>By memorylessness, <span class="math inline">\(e^{-6\cdot(1/6)}=e^{-1}\approx0.368\)</span>; the past 10 minutes are irrelevant.</p></li>
+<li><p><span class="math inline">\(\lambda\tau=6\cdot\tfrac13=2\)</span>, so <span class="math inline">\(P(k,1/3)=\dfrac{2^3e^{-2}}{3!}=4e^{-2}/3\approx0.1804\)</span>.</p></li>
+<li><p><span class="math inline">\(E[Y_3]=3/6=0.5\)</span> hours.</p></li>
+<li><p>By memorylessness, the past 10 minutes are irrelevant, and we have <span class="math inline">\(P(0,1/6) = e^{-6\cdot(1/6)}=e^{-1}\approx0.368\)</span>;</p></li>
 </ol>
 </div>
 </div>
@@ -3733,61 +3619,24 @@ Solution
 </section>
 <section id="splitting" class="level2">
 <h2 class="anchored" data-anchor-id="splitting">Splitting</h2>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Splitting
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Each arrival of a Poisson<span class="math inline">\((\lambda)\)</span> process is independently labeled <strong>type A</strong> with probability <span class="math inline">\(p\)</span> and type B otherwise.</p>
-</div>
-</div>
+<p>Suppose each arrival of a Poisson<span class="math inline">\((\lambda)\)</span> process is independently kept with probability <span class="math inline">\(p\)</span> and discarded with probability <span class="math inline">\(1-p\)</span>.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Result
+Split Poisson Process
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Type A and type B arrivals are <strong>independent Poisson processes</strong> with rates <span class="math display">\[\lambda_A=p\lambda,\qquad\lambda_B=(1-p)\lambda.\]</span></p>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Intuition
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>In a tiny slot, <span class="math inline">\(P(\text{type A arrival})=\lambda\delta\cdot p\)</span>, and slots remain independent.</p>
+<p>The set of kept arrivals and discarded arrivals are <strong>independent Poisson processes</strong> with rates <span class="math display">\[\lambda_k=p\lambda,\qquad\lambda_d=(1-p)\lambda.\]</span></p>
 </div>
 </div>
 </section>
 <section id="merging" class="level2">
 <h2 class="anchored" data-anchor-id="merging">Merging</h2>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Merging
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Combine two <strong>independent</strong> Poisson processes with rates <span class="math inline">\(\lambda_1\)</span> and <span class="math inline">\(\lambda_2\)</span> into a single stream.</p>
-</div>
-</div>
+<p>We can also combine two <strong>independent</strong> Poisson processes with rates <span class="math inline">\(\lambda_1\)</span> and <span class="math inline">\(\lambda_2\)</span> into a single stream by recording an arrival whenever an arrival occurs in either process.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3798,20 +3647,7 @@ Result
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The merged process is Poisson with rate <span class="math inline">\(\lambda_1+\lambda_2\)</span>, and each arrival independently comes from process 1 with probability <span class="math display">\[\frac{\lambda_1}{\lambda_1+\lambda_2}.\]</span></p>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Why
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>In a tiny slot, <span class="math inline">\(P(\text{arrival from either})\approx(\lambda_1+\lambda_2)\delta\)</span>. Equivalently, the first arrival time is the minimum of two independent exponentials, which is Exponential<span class="math inline">\((\lambda_1+\lambda_2)\)</span>.</p>
+<p>The merged process is Poisson with rate <span class="math inline">\(\lambda_1+\lambda_2\)</span>, and each arrival independently comes from process 1 and process 2 with probabilities <span class="math display">\[\frac{\lambda_1}{\lambda_1+\lambda_2} \quad\text{ and }\quad \frac{\lambda_2}{\lambda_1+\lambda_2}\]</span> respectively, independent of all other arrivals and origins.</p>
 </div>
 </div>
 <section id="example-mail-packages-at-the-post-office" class="level3">
@@ -3826,7 +3662,7 @@ Example
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Packages are mailed as a Poisson process with rate 10 per hour. Each package is domestic with probability 0.7 and international with probability 0.3, independently.</p>
+<p>Packages are mailed as a Poisson process with rate <span class="math inline">\(\lambda = 10\)</span> per hour. Each package is domestic with probability <span class="math inline">\(p = 0.7\)</span> and international with probability <span class="math inline">\(1-p = 0.3\)</span>, independently.</p>
 <ol type="a">
 <li><p>What is the probability of no international packages in 30 minutes?</p></li>
 <li><p>Given that 4 packages arrived in an hour, what is the probability that exactly 1 is international?</p></li>
@@ -3843,9 +3679,9 @@ Solution
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>By splitting, domestic packages are Poisson with rate 7 per hour and international packages are Poisson with rate 3 per hour, independent of each other.</p>
+<p>By splitting, domestic packages are Poisson with rate <span class="math inline">\(\lambda_d = p\lambda = 7\)</span> per hour and international packages are Poisson with rate <span class="math inline">\(\lambda_i = (1-p)\lambda = 3\)</span> per hour, independent of each other.</p>
 <ol type="a">
-<li><p><span class="math inline">\(e^{-3(0.5)}=e^{-1.5}\approx0.223\)</span>.</p></li>
+<li><p><span class="math inline">\(P(0,0.5) = e^{-3(0.5)}=e^{-1.5}\approx0.223\)</span>.</p></li>
 <li><p>Each of the 4 packages is international independently with probability 0.3, so <span class="math inline">\(\binom41(0.3)(0.7)^3\approx0.412\)</span>.</p></li>
 </ol>
 </div>
@@ -3864,60 +3700,45 @@ Setup
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(Y=X_1+\cdots+X_N\)</span>, where <span class="math inline">\(N\)</span> is a nonnegative integer-valued random variable and the <span class="math inline">\(X_i\)</span> are i.i.d. and independent of <span class="math inline">\(N\)</span>.</p>
+<p>Let <span class="math inline">\(N, X_1, X_2, \cdots\)</span> be independent random variables, where <span class="math inline">\(N\)</span> takes nonnegative integer values. Let <span class="math display">\[Y = X_1 + \cdots + X_N\]</span> for positive values of <span class="math inline">\(N\)</span>, and let <span class="math inline">\(Y = 0\)</span> when <span class="math inline">\(N = 0\)</span>.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Summary
-</div>
-</div>
-<div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 21%">
+<col style="width: 26%">
 </colgroup>
 <thead>
 <tr class="header">
-<th></th>
-<th>Formula</th>
+<th><span class="math inline">\(X_i\)</span> <span class="math inline">\(\setminus\)</span> <span class="math inline">\(N\)</span></th>
+<th>Binomial(m, q)</th>
+<th>Poisson(λ)</th>
+<th>Geometric(q)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Mean</td>
-<td><span class="math inline">\(E[Y]=E[N]\,E[X]\)</span></td>
+<td><strong>Bernoulli(p)</strong></td>
+<td><span class="math inline">\(Y \sim\)</span> Binomial(m, pq)</td>
+<td><span class="math inline">\(Y \sim\)</span> Poisson(λp)</td>
+<td></td>
 </tr>
 <tr class="even">
-<td>Variance</td>
-<td><span class="math inline">\(\text{Var}(Y)=E[N]\,\text{Var}(X)+(E[X])^2\,\text{Var}(N)\)</span></td>
+<td><strong>Geometric(p)</strong></td>
+<td></td>
+<td></td>
+<td><span class="math inline">\(Y \sim\)</span> Geometric(pq)</td>
 </tr>
 <tr class="odd">
-<td>Transform</td>
-<td><span class="math inline">\(M_Y(s)=M_N\!\left(\ln M_X(s)\right)\)</span></td>
+<td><strong>Exponential(λ)</strong></td>
+<td></td>
+<td></td>
+<td><span class="math inline">\(Y \sim\)</span> Exponential(λq)</td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Where it comes from
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Condition on <span class="math inline">\(N\)</span>: <span class="math inline">\(E[Y\mid N]=N\,E[X]\)</span> and <span class="math inline">\(\text{Var}(Y\mid N)=N\,\text{Var}(X)\)</span>, then apply the law of iterated expectation and the law of total variance from Lecture 10.</p>
-</div>
-</div>
 </section>
 <section id="random-incidence-paradox" class="level2">
 <h2 class="anchored" data-anchor-id="random-incidence-paradox">Random Incidence Paradox</h2>
@@ -3934,22 +3755,9 @@ Example
 <p>Buses arrive as a Poisson process with rate <span class="math inline">\(\lambda\)</span>, so the average gap between buses is <span class="math inline">\(1/\lambda\)</span>. You arrive at a random time. How long is the gap you land in?</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Looking forward and backward
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>Time until the next bus: Exponential<span class="math inline">\((\lambda)\)</span> with mean <span class="math inline">\(1/\lambda\)</span> (fresh start).</li>
-<li>Time since the last bus: also Exponential<span class="math inline">\((\lambda)\)</span> with mean <span class="math inline">\(1/\lambda\)</span> (run the process backward in time).</li>
-</ul>
-</div>
-</div>
+<p>Suppose you arrive at time <span class="math inline">\(t^*\)</span>, and let <span class="math inline">\([U,V]\)</span> be the interarrival interval that contains <span class="math inline">\(t^*\)</span>. The gap you land in has length <span class="math inline">\(L = V - U\)</span>, and <span class="math display">\[L = (t^* - U) + (V - t^*).\]</span> The length <span class="math inline">\(t^* - U\)</span> is determined by past history of the process and <span class="math inline">\(V - t^*\)</span> is determined by future history of the process, which are independent by independence (fresh start) properties of the Poisson process.</p>
+<p>Thus, <span class="math inline">\(L\)</span> is the sum of two independent exponential random variables with parameter <span class="math inline">\(\lambda\)</span>, so <span class="math inline">\(\mathbb{E}[L] = 2/\lambda\)</span>!</p>
+<hr>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3969,15 +3777,15 @@ The paradox
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Resolution
+Reasoning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Random times are more likely to land in <strong>long</strong> gaps. This is length-biased sampling, so the gap you observe is not a typical one.</p>
+<p>Random times are more likely to land in <strong>long</strong> gaps. This is due to length-biased sampling bias!</p>
 </div>
 </div>
-<section id="example-4" class="level3">
-<h3 class="anchored" data-anchor-id="example-4">Example</h3>
+<section id="non-poisson-process-example" class="level3">
+<h3 class="anchored" data-anchor-id="non-poisson-process-example">Non-Poisson Process Example</h3>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3988,7 +3796,7 @@ Example
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Gaps between buses are 5 minutes or 15 minutes, each with probability <span class="math inline">\(\tfrac12\)</span>, so the average gap is 10 minutes. What is the average gap seen by a random arriver?</p>
+<p>Gaps between buses are 5 minutes or 55 minutes, each with probability <span class="math inline">\(\tfrac12\)</span>, so the average gap is 30 minutes. What is the average gap seen by a random arriver?</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -4001,7 +3809,7 @@ Solution
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A random arrival lands in a 5-minute gap with probability <span class="math inline">\(\frac{5}{5+15}=0.25\)</span> and in a 15-minute gap with probability <span class="math inline">\(0.75\)</span>: <span class="math display">\[E[\text{observed gap}]=0.25(5)+0.75(15)=12.5\text{ minutes}&gt;10.\]</span> In general, <span class="math inline">\(E[\text{observed gap}]=\dfrac{E[Y^2]}{E[Y]}\)</span>, which for Exponential<span class="math inline">\((\lambda)\)</span> gaps is <span class="math inline">\(\dfrac{2/\lambda^2}{1/\lambda}=\dfrac2\lambda\)</span>.</p>
+<p>A random arrival lands in a 5-minute gap with probability <span class="math inline">\(\frac{5}{5+55}=1/12\)</span> and in a 55-minute gap with probability <span class="math inline">\(11/12\)</span>: <span class="math display">\[E[\text{observed gap}]=1/12(5)+11/12(55)=50.83\text{ minutes}&gt;30.\]</span> In general, <span class="math inline">\(E[\text{observed gap}]=\dfrac{E[Y^2]}{E[Y]}\)</span>, which for Exponential(<span class="math inline">\(\lambda\)</span>) gaps is <span class="math inline">\(\dfrac{2/\lambda^2}{1/\lambda}=\dfrac2\lambda\)</span>.</p>
 </div>
 </div>
 </section>
